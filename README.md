@@ -1,5 +1,5 @@
 # Bot_Bacalhau
-Bot para o clube de game dev da 42 Lisboa
+Bot de Discord para os clubes da https://www.42lisboa.com em python 🐍
 
 What we want:
 
