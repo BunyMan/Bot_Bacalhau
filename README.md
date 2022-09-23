@@ -4,7 +4,7 @@ Bot de Discord para os clubes da https://www.42lisboa.com em python 🐍 (Work i
 What we want:
 
 Game Dev Discord Requisitions
-- [ ] Sistema de niveis
+- [✓] Sistema de niveis
 - [ ] parte privada para a board(links, polls e general)
 - [ ] sitio para as reuniões
 - [ ] announcements (para o whatsapp e email)
