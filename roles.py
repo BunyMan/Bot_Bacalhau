@@ -1,28 +1,17 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    CRL.py                                             :+:      :+:    :+:    #
+#    roles.py                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: jbuny-fe <jbuny-fe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/30 11:31:29 by jbuny-fe          #+#    #+#              #
-#    Updated: 2022/05/26 15:40:29 by jbuny-fe         ###   ########.fr        #
-#    Updated: 2022/05/26 15:17:08 by jbuny-fe         ###   ########.fr        #
+#    Updated: 2022/09/23 15:40:29 by jbuny-fe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 import discord
-from discord.ext import commands
 from config import *
-import datetime
-import os
-import sys
-import time
-import toml
-import threading
-import requests
-import json
-import traceback
 
 class MyClient(discord.Client):
     
