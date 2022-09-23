@@ -12,7 +12,6 @@
 # **************************************************************************** #
 
 import discord
-from discord.ext import commands
 from config import *
 import datetime
 import os
@@ -22,15 +21,26 @@ import toml
 import threading
 import requests
 import json
+import traceback
 
-bot = commands.Bot(command_prefix="bacalhau", description="Bacalhau_demolhado")
+# bot = commands.Bot(command_prefix="bacalhau", description="Bacalhau_demolhado")
 
-client = discord.Client()
-thanks = ["thank you", "thank u", "thanks", "thx", "obrigado", "obrigada"]
+intents = discord.Intents.all()
+intents.members = True
+
+client = discord.Client(intents=intents)
+thanks = ["thank you", "thank u", "thanks", "thx", "obrigado", "obrigada", ]
 bacalhau = ["bacalhau", "Bacalhau"]
 sorry = ["Sorry", "sorry", "desculpa", "Desculpa", "I'm sorry", "im sorry", "Im sorry"]
 gm = ["gm", "good morning", "Bom dia", "bom dia"]
-hey = ["hey", "hello", "heyy", "Boas", "boas", "ola", "olá"]
+hey = ["hey", "hello", "heyy", "Boas", "boas", "ola", "olá", "Ola", "Olá", "oi", "Oi", "hi", "Hi", "hey there", 
+        "Hey there", "hey there!", "Hey there!", "hey there!!", "Hey there!!", "hey there!!!", "Hey there!!!", "hey there!!!!", 
+        "Hey there!!!!", "hey there!!!!!", "Hey there!!!!!", "hey there!!!!!!", "Hey there!!!!!!", "hey there!!!!!!!", "Hey there!!!!!!!",
+         "hey there!!!!!!!!", "Hey there!!!!!!!!", "hey there!!!!!!!!!", "Hey there!!!!!!!!!", "hey there!!!!!!!!!!", "Hey there!!!!!!!!!!", 
+         "hey there!!!!!!!!!!!", "Hey there!!!!!!!!!!!", "hey there!!!!!!!!!!!!", "Hey there!!!!!!!!!!!!", "hey there!!!!!!!!!!!!!", "Hey there!!!!!!!!!!!!!",
+          "hey there!!!!!!!!!!!!!!", "Hey there!!!!!!!!!!!!!!", "hey there!!!!!!!!!!!!!!!", "Hey there!!!!!!!!!!!!!!!", "hey there!!!!!!!!!!!!!!!!", "Hey there!!!!!!!!!!!!!!!!"]
+links = ["I NEED THE LINKS", "bacalhau.links", "UNLIMITED POWER", "GIMME THE LINKS", "links?", "links", "LINKS", "links please", "links please?", "links please!"]
+login = ["login?", "passe da conta", "qual é a pass", "qual é o login", "login", "password", "pass", "passe", "passe da conta?"]
 
 def timer():  # starts once the program is started
     try:
@@ -43,7 +53,7 @@ def timer():  # starts once the program is started
                 seconds += 1
                 global time_active  # time active to show in the console
                 time_active = (str(int(seconds)))
-                if stop == True:
+                if stop == True: 
                     break
                 with open('time_keeper',
                           'w') as tk:  # updates the time_keeper file so that is doesn't loose time once the program
@@ -56,18 +66,14 @@ def timer():  # starts once the program is started
             f.write('seconds = ' + str(int(s)) + '\n')
             f.close()
 
-# @bot.event
-# async def on_raw_reaction_add(message):
-#     ourMessageID = 980551346417725550
-#     if ourMessageID == payload.message_id:
-#         member = payload.member
-#         guild = member.guild
-#         emoji = message.emoji.name
-#         if emoji == "🖕":
-#             role = discord.utils.get(guild.roles, name="Weebs")
-#         elif emoji == "👍":
-#             role = discord.utils.get(guild.roles, name="Master baiters")
-#         await member.add_role(role)    
+
+# funciton that checks for an active internet connection
+def is_connected():
+    try:
+        requests.get('https://google.com')
+        return True
+    except:
+        return False
 
 @client.event
 async def on_ready():
@@ -94,7 +100,7 @@ async def on_ready():
     print('{0.user} is now online! ✅\n'.format(client))
 
 async def responses(message, userid, user):
-    Admins = ["El Madeirense", "Garrett"]
+    Admins = [692424917995618384, 695668988444672100] #El Madeirense, Noah🖕
     if message.author == client.user:
         return
     for word in thanks:
@@ -127,6 +133,18 @@ async def responses(message, userid, user):
             break
         else:
             hey_true = False
+    for word in links:
+        if word in message.content:
+            linkss = True
+            break
+        else:
+            linkss = False
+    for word in login:
+        if word in message.content:
+            loginn = True
+            break
+        else:
+            loginn = False
     if message.content.startswith(("hello there", "Hello there")):
         await message.channel.send("General Kenobi")
     if hey_true and bacalhau_true:
@@ -144,13 +162,6 @@ async def responses(message, userid, user):
                 **   - bacalhau.STOP! -->** Completely shuts me down, should only be used as a last resort \n",
         color=discord.Color.blue())
         await message.channel.send("Heyy " + f"<@{userid}>" + "\n",embed=embed)
-    if message.content.startswith(("bacalhau.calendar", "bacalhau.calendar")):
-        embed=discord.Embed(title="Live Sessions Calendar",
-        url="https://calendar.google.com/event?action=TEMPLATE&tmeid=MXNkbGowb3NuczQ1bmlzMGdlZGVxbHQ2ZXFfMjAyMjA1MTJUMTgwMDAwWiBjb21tdW5pdHktbWFuYWdlbWVudEBtaWxlc2ludGhlc2t5LmVkdWNhdGlvbg&tmsrc=community-management%40bacalhauinthesky.education&scp=ALL", 
-        description="Hey " + f"<@{userid}>" + ", here you have the calendar for the Live Sessions of this Jorney", 
-        color=discord.Color.blue())
-        embed.set_thumbnail(url="https://logosmarcas.net/wp-content/uploads/2021/04/Google-Calendar-Logo.png")
-        await message.channel.send(f"<@{userid}>", embed=embed)
     if message.content.startswith("bacalhau.git"):
         embed=discord.Embed(title="Bacalhau on GitHub",
         url="https://github.com/BunyMan/Bot_Bacalhau.git",
@@ -170,17 +181,19 @@ async def responses(message, userid, user):
         color=discord.Color.blue())
         embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/25/25231.png")
         await message.channel.send(embed=embed)
-    if user in Admins and message.content.startswith(("bacalhau.reboot", "bacalhau.reboot", "bacalhau, reboot")):
+    if userid in Admins and message.content.startswith(("bacalhau.reboot", "bacalhau.reboot", "bacalhau, reboot")):
         await message.channel.send("Rebooting process inicialized! ❌ bacalhau will be down for a few seconds")
         print("bacalhau is rebooting...")
         await message.channel.send("Shutting down... <:codhold:977712053101928448>")
         os.execl(sys.executable, sys.executable, *sys.argv)
     elif user not in Admins and message.content.startswith(("bacalhau.reboot", "bacalhau.reboot", "bacalhau, reboot")):
         await message.channel.send("Hey " + f"<@{userid}>"+ ", that's an admin only command!")
-    if user in Admins and message.content.startswith(("bacalhau, go to sleep", "Bacalhau, go to sleep")):
-       await message.channel.send("I'll be back!")
-       time.sleep(300)
-       await message.channel.send("My 5 minutes are up, I'm back!")
+    if userid in Admins and message.content.startswith(("bacalhau, go to sleep", "Bacalhau, go to sleep")):
+        await message.channel.send("I'll be back!")
+        activity = discord.Game(name="Dead")
+        await client.change_presence(status=discord.Status.idle, activity=activity)
+        time.sleep(300)
+        await message.channel.send("My 5 minutes are up, I'm back!")
     elif user not in Admins and message.content.startswith(("bacalhau.take five", "bacalhau, take five")):
         await message.channel.send("Hey " + f"<@{userid}>"+ ", that's an admin only command!")
     if message.content.startswith("bacalhau.uptime") or message.content.startswith("bacalhau.uptime"):
@@ -202,28 +215,21 @@ async def responses(message, userid, user):
     elif user not in Admins and message.content.startswith(("bacalhau.log-file", "bacalhau.log-file")):
         await message.channel.send("Hey, " + f"<@{userid}>" + ", only admins can use that command!")
     if "bacalhau?" in message.content or "Bacalhau?" in message.content:
-        await message.channel.send("I'm alive! Kinda... 🤖")
+        await message.channel.send("Still swimming... 🤖")
     if gm_true:
         await message.channel.send("Good morning!! <:codthink:977711037287632996>")
     if thanks_true and bacalhau_true:
         await message.channel.send("<:uwu:977715133113577492>")
     if sorry_true and bacalhau_true:
         await message.channel.send("No problem, " + f"<@{userid}>" + ". Don't worry about it!")
-    if message.content.startswith(("bacalhau.progress", "bacalhau.progress", "bacalhau, progress", "bacalhau, progress")):
-        start = datetime.date(2022,4,29)
-        today = datetime.date.today()
-        future = datetime.date(2022,5,30)
-        time_since_start = today - start
-        progress = future - today
-        rd1 = str(progress)
-        rd2 = str(time_since_start)
-        await message.channel.send("Your Journey has started " + rd2[0:7] + " ago and you have " + rd1[0:7] + " left until the end of this Journey! Keep it up! 💪")
-    if message.content.startswith("ping"):
+    if message.content.startswith("ping") or message.content.startswith("Ping"):
         await message.channel.send("pong 🏓")
-    if user in Admins and message.content.startswith("bacalhau.purge") or message.content.startswith("Bacalhau.purge"):
+    if userid in Admins and message.content.startswith("bacalhau.purge") or message.content.startswith("Bacalhau.purge"):
         await message.channel.send("🐟")
         time.sleep(1)
         await message.channel.purge()
+        os.system("clear")
+        print("Channel was purged!")
     elif user not in Admins and message.content.startswith("bacalhau.purge") or message.content.startswith("Bacalhau.purge"):
         await message.channel.send("Hey, " + f"<@{userid}>" + ", only admins can use that command!")
     if "fuck bacalhau" in message.content:
@@ -237,7 +243,7 @@ async def responses(message, userid, user):
             await msg.add_reaction("👍")
             await msg.add_reaction("🖕")
             #await message.add_reaction("😱")
-    if "Nice" in message.content or "nice" in message.content:
+    if "Nice" in message.content or "nice" in message.content or "noice" in message.content:
         await message.channel.send("Podes crer que é nice!")
     if message.content.startswith("bacalhau.terminal"):
         while True:
@@ -247,17 +253,20 @@ async def responses(message, userid, user):
                 break
             else:
                 await message.channel.send(msg)
+    if linkss:
+        await message.channel.send("<https://pin.it/684ijga>")
+        await message.channel.send("<https://azgaar.github.io/Fantasy-Map-Generator/>")
+        await message.channel.send("<https://www.aiva.ai/>")
+        await message.channel.send("<https://www.nuclino.com/>")
+        await message.channel.send("<https://assetstore.unity.com/?gclid=EAIaIQobChMIyafvuKSI-gIVzpBoCR2YKgYqEAAYASAAEgLtV_D_BwE&gclsrc=aw.ds>")
+    if loginn:
+        await message.channel.send("Pede os dados de login a um membro da board")
+    if message.content == "🖕":
+        await message.add_reaction("🖕")
                
 @client.event
 async def on_message(message):
-    # Setting `Playing ` status
-    #await bot.change_presence(activity=discord.Game(name="a game"))
-    # Setting `Streaming ` status
-    #await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
-    # Setting `Listening ` status
-    #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
-    # Setting `Watching ` status
-    #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
+    print(message.content)
     activity = discord.Game(name="Master Baiter")
     await client.change_presence(status=discord.Status.online, activity=activity)
     threading.Thread(target=timer).start()
@@ -287,9 +296,29 @@ async def on_message(message):
     elif user not in Admins and message.content.startswith("bacalhau.STOP!") or message.content.startswith("bacalhau.STOP!") or message.content.startswith("bacalhau, STOP!") or message.content.startswith("bacalhau, STOP!"):
         await message.channel.send("Hey " + f"<@{userid}>" + ", only admins can use that command!")
     try:
-        await responses(message, userid, user)
-    except:
+        if is_connected():
+            await responses(message, userid, user)
+        else:
+            print("Not connected to internet ❌")
+    except Exception:
         await message.channel.send(f"<@{userid}>" + " Oops, that didn't work! Please report this :)")
         print("Warning, something failed. Please check for user report.")
+        traceback.print_exc()
+
+@client.event
+async def on_message_edit(before, after):
+    await before.channel.send(
+        f'{before.author} edited a message.\n'
+        f'The original message was: {before.content}\n'
+    )
+
+@client.event
+async def on_reaction_add(reaction, user, userid):
+    # bacalhau = 973565627291820042
+    if str(user) != "Bacalhau#6891":
+        if reaction.emoji == "🖕":
+            await reaction.message.channel.send(f"{userid} 🖕")
+        #await reaction.message.channel.send(f'{user} reacted with {reaction.emoji}')
+        print(str(reaction.emoji))
 
 client.run('OTczNTY1NjI3MjkxODIwMDQy.GVL7cp.pdUGL8WLhbZZPVksyXskgI8R4Kf4ZYCwH1zgN8')
